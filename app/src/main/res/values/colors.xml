@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hang_up_red">#ff0000</color>
+    <color name="primary">#F44336</color>
+    <color name="primary_dark">#D50000</color>
+    <color name="accent">#EF5350</color>
+
+
+</resources>
