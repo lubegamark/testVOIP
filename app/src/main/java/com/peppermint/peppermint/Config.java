@@ -16,11 +16,6 @@
 
 package com.peppermint.peppermint;
 
-import android.net.Uri;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
 
 public class Config {
     // General configuration
@@ -32,5 +27,8 @@ public class Config {
     public static final String DOGFOOD_BUILD_WARNING_TITLE = "Test build";
     public static final String DOGFOOD_BUILD_WARNING_TEXT = "This is a test build.";
     public static final String APP_NAME = "Peppermint-Android";
+
+    //public static final Uri API = Uri.parse("http://192.168.1.10:8000/api/");
+    public static final String API = "http://192.168.43.58:8000/api";
 
 }

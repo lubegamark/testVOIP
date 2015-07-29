@@ -1,7 +1,10 @@
 package com.peppermint.peppermint.ui;
 
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,17 +31,38 @@ public class UserListActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        AccountManager am = (AccountManager) UserListActivity.this.getSystemService(Context.ACCOUNT_SERVICE);
+        Account[] accounts = am.getAccountsByType("com.peppermint.peppermint");
+        Account account =null;
+        if (accounts.length > 0) {
+            account = accounts[0];
+            Log.i("Account Name", account.name);
+        }
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        Intent serviceIntent = new Intent(this, CallService.class);
-        startService(serviceIntent);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
-        setSupportActionBar(toolbar);
+        Intent openStartingPoint;
+        if (account == null) {
+            openStartingPoint = new Intent(UserListActivity.this, LoginActivity.class);
+            startActivity(openStartingPoint);
+        }else{
+
+            setContentView(R.layout.activity_main);
+
+            PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+            Intent serviceIntent = new Intent(this, CallService.class);
+            startService(serviceIntent);
+
+        }
+
+
 
     }
 
-
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
