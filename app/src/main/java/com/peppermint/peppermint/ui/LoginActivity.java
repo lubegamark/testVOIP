@@ -269,7 +269,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         am.addAccountExplicitly(account,  "UYHJOIUHYKJ$%^&*76543", extraData);
         am.getUserData(account, "id");
         Intent openStartingPoint;
-        openStartingPoint = new Intent(this, UserListActivity.class);
+        openStartingPoint = new Intent(this, MainActivity.class);
         startActivity(openStartingPoint);
     }
 

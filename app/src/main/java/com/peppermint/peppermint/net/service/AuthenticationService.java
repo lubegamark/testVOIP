@@ -1,6 +1,7 @@
 package com.peppermint.peppermint.net.service;
 
 import com.peppermint.peppermint.model.User;
+import com.peppermint.peppermint.net.handler.NetworkHandler;
 
 import java.util.List;
 
@@ -22,5 +23,6 @@ public interface AuthenticationService {
 
     @POST("/users/")
     void regsiterUser(@Body User user, Callback<User> userCallBack);
+
 
 }

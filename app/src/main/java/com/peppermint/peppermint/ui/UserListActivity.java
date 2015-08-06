@@ -4,9 +4,13 @@ package com.peppermint.peppermint.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -21,12 +25,18 @@ import android.view.MenuItem;
 import com.peppermint.peppermint.R;
 import com.peppermint.peppermint.service.CallService;
 
+import java.util.List;
+
 import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
 
 public class UserListActivity extends BaseActivity {
     private static final String TAG = makeLogTag(UserListActivity.class);
+
+    WifiManager wifi;
+    WifiConfiguration wc;
+    String wifis[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,14 @@ public class UserListActivity extends BaseActivity {
             startService(serviceIntent);
 
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -87,4 +105,17 @@ public class UserListActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private class WifiScanReceiver extends BroadcastReceiver {
+        public void onReceive(Context c, Intent intent) {
+            List<ScanResult> wifiScanList = wifi.getScanResults();
+            wifis = new String[wifiScanList.size()];
+
+            for(int i = 0; i < wifiScanList.size(); i++){
+                wifis[i] = ((wifiScanList.get(i)).toString());
+            }
+            //lv.setAdapter(new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,wifissids));
+        }
+    }
+
 }
