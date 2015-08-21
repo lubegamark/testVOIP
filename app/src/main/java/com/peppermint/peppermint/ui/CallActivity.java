@@ -43,9 +43,9 @@ import java.text.ParseException;
     public class CallActivity extends AppCompatActivity implements View.OnTouchListener {
 
     public String sipAddress = null;
-    public String sipUsername="lubega";
-    public String sipDomain="192.168.1.20";
-    public String sipPassword="bongo";
+    public String sipUsername=null;
+    public String sipDomain=null;
+    public String sipPassword=null;
     public int    sipPort = 5060;
 
     public SipManager manager = null;
@@ -64,6 +64,11 @@ import java.text.ParseException;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.walkietalkie);
 
+
+        sipAddress = null;
+        sipUsername=getIntent().getExtras().getString("sipUsername");
+        sipDomain=getIntent().getExtras().getString("sipDomain");
+        sipPassword=getIntent().getExtras().getString("sipPassword");
 
         // Set up the intent filter.  This will be used to fire an
         // IncomingCallReceiver when someone calls the SIP address used by this
@@ -126,11 +131,15 @@ import java.text.ParseException;
             closeLocalProfile();
         }
 
+        /*
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         sipUsername = prefs.getString("namePref", "");
         sipDomain = prefs.getString("domainPref", "");
         sipPassword = prefs.getString("passPref", "");
         sipPort = Integer.parseInt( prefs.getString( "portPref", "5060" ) );
+
+        */
 
         if (sipUsername.length() == 0 || sipDomain.length() == 0 || sipPassword.length() == 0) {
             showDialog(R.id.SET_SIP_OPTIONS);

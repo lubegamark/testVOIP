@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -15,22 +14,19 @@ import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.peppermint.peppermint.R;
 import com.peppermint.peppermint.receiver.IncomingCallReceiver;
 import com.peppermint.peppermint.util.NetUtils;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 
 import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.LOGI;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
+
 
 public class CallService extends Service {
     Context serviceContext = this;

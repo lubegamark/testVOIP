@@ -57,9 +57,9 @@ public class NetworkHandler {
 
     }
 
-    public void registerNetwork(Network Network){
+    public void registerNetwork(Network network){
 
-        networkService.regsiterNetwork(Network, new RegisterNetworkCallback());
+        networkService.regsiterNetwork(network, new RegisterNetworkCallback());
 
     }
     

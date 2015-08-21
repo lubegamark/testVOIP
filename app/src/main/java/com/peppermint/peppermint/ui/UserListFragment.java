@@ -1,11 +1,14 @@
 package com.peppermint.peppermint.ui;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,12 +111,21 @@ public class UserListFragment extends Fragment {
                 @Override
                 public void onClick(View v)
                 {
-
+                    AccountManager am = (AccountManager) getActivity().getSystemService(Context.ACCOUNT_SERVICE);
+                    Account[] accounts = am.getAccountsByType("com.peppermint.peppermint");
+                    Account account =null;
+                    if (accounts.length > 0) {
+                        account = accounts[0];
+                        Log.i("Account Name", account.name);
+                    }
                     Intent i;
                     i = new Intent(
                             getActivity(),
                             CallActivity.class);
-                    //i.putExtra("jid", jid);
+                    //i.putExtra("sipUsername", "mark");
+                    //i.putExtra("sipDomain", "192.168.1.20");
+                    //i.putExtra("sipPassword", "bongo");
+
                     //Log.i("jid", jid);
                     startActivity(i);
                 }

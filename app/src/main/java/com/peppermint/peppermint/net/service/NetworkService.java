@@ -22,6 +22,6 @@ public interface NetworkService {
 
 
     @POST("/networks/")
-    void regsiterNetwork(@Body Network Network, Callback<Network> networkCallBack);
+    void regsiterNetwork(@Body Network network, Callback<Network> networkCallBack);
 
 }

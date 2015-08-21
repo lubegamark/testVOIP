@@ -12,6 +12,15 @@ public class Network {
     private Float latitude;
     private Float longitude;
     private String passphrase;
+    private int callserver;
+
+    public int getCallserver() {
+        return callserver;
+    }
+
+    public void setCallserver(int callserver) {
+        this.callserver = callserver;
+    }
 
     public Network(int id, String name, String SSID, String BSSID) {
         this.id = id;
@@ -20,7 +29,7 @@ public class Network {
         this.BSSID = BSSID;
     }
 
-    public Network(int id, String name, String SSID, String BSSID, String address, Float latitude, Float longitude, String passphrase) {
+    public Network(int id, String name, String SSID, String BSSID, String address, Float latitude, Float longitude, String passphrase, int callserver) {
         this.id = id;
         this.name = name;
         this.SSID = SSID;
@@ -29,6 +38,7 @@ public class Network {
         this.latitude = latitude;
         this.longitude = longitude;
         this.passphrase = passphrase;
+        this.callserver = callserver;
     }
 
     public String getAddress() {

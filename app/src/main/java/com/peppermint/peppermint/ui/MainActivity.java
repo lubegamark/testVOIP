@@ -13,15 +13,18 @@ import android.util.Log;
 import android.view.Menu;
 
 import com.peppermint.peppermint.model.Network;
+import com.peppermint.peppermint.model.Subscription;
 import com.peppermint.peppermint.net.callback.NetworkCallback;
+import com.peppermint.peppermint.net.callback.SubscriptionCallback;
 import com.peppermint.peppermint.net.handler.NetworkHandler;
+import com.peppermint.peppermint.net.handler.SubscriptionHandler;
 
 import java.util.List;
 
 import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
-public class MainActivity extends Activity implements NetworkCallback {
+public class MainActivity extends Activity implements NetworkCallback, SubscriptionCallback {
     private static final String TAG = makeLogTag(MainActivity.class);
 
     WifiManager wifiManager;
@@ -30,7 +33,11 @@ public class MainActivity extends Activity implements NetworkCallback {
     String wifibssids[];
     List<Network> networksList;
     NetworkHandler networkHandler;
+    SubscriptionHandler subscriptionHandler;
     List<ScanResult> wifiScanList;
+    Intent openStartingPoint;
+    AccountManager am;
+    Account account;
     @Override
 	protected void onCreate(Bundle Splash) {
 		super.onCreate(Splash);
@@ -41,9 +48,9 @@ public class MainActivity extends Activity implements NetworkCallback {
 
         wifissids = new String[wifiScanList.size()];
         wifibssids = new String[wifiScanList.size()];
-		AccountManager am = (AccountManager) MainActivity.this.getSystemService(Context.ACCOUNT_SERVICE);
+		am= (AccountManager) MainActivity.this.getSystemService(Context.ACCOUNT_SERVICE);
         Account [] accounts = am.getAccountsByType("com.peppermint.peppermint");
-        Account account =null;
+        account =null;
         if (accounts.length > 0) {
         account = accounts[0];
         Log.i("Account Name", account.name);
@@ -95,23 +102,31 @@ public class MainActivity extends Activity implements NetworkCallback {
         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
         for( WifiConfiguration i : list ) {
             if(i.SSID != null && i.SSID.equals("\"" + network.getSSID() + "\"")) {
-                wifiManager.disconnect();
-                LOGD(TAG, "Disconnected from network");
-                wifiManager.enableNetwork(i.networkId, true);
-                LOGD(TAG, "Enabled network");
-                wifiManager.reconnect();
-                LOGD(TAG, "Reconnected to network");
-                break;
+
+
+                int callserver = network.getCallserver();
+
+                if(account!=null) {
+                    int id = Integer.parseInt(am.getUserData(account, "id"));
+
+                    subscriptionHandler = new SubscriptionHandler(this);
+                    subscriptionHandler.setSubscriptionCallback(this);
+                    subscriptionHandler.registerSubscription(id, callserver);
+                    break;
+                }
+                //wifiManager.disconnect();
+                //LOGD(TAG, "Disconnected from network");
+                //wifiManager.enableNetwork(i.networkId, true);
+                //LOGD(TAG, "Enabled network");
+                //wifiManager.reconnect();
+                //LOGD(TAG, "Connected to network");
             }
         }
-
-
     }
 
     @Override
     public void getNetworksResponseReceived(List<Network> networks) {
         LOGD(TAG, "Hsdfmsdof odfsid found");
-
 
             for(int i =0; i< wifiScanList.size(); i++) {
 
@@ -132,6 +147,7 @@ public class MainActivity extends Activity implements NetworkCallback {
                     if(matchedNetwork.getBSSID().equals(wifibssids[j])){
                         //LOGD(TAG, "BSSID "+networks.get(i).getBSSID()+" equal ");
                         networkHandler.getNetwork(matchedNetwork.getId());
+                        LOGD(TAG, "Network found");
                     }
 
 
@@ -141,6 +157,28 @@ public class MainActivity extends Activity implements NetworkCallback {
 
             }
         }
+
+    }
+
+    @Override
+    public void registerSubscriptionResponseReceived(Subscription subscription) {
+        openStartingPoint = new Intent(MainActivity.this, UserListActivity.class);
+        openStartingPoint.putExtra("sipUsername", am.getUserData(account, "username"));
+        openStartingPoint.putExtra("sipDomain", subscription.getLocal_ip());
+        openStartingPoint.putExtra("sipPassword", subscription.getPassword());
+        LOGD(TAG, "Subscription Registered");
+        openStartingPoint.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(openStartingPoint);
+
+    }
+
+    @Override
+    public void getSubscriptionResponseReceived(Subscription subscription) {
+
+    }
+
+    @Override
+    public void getSubscriptionsResponseReceived(List<Subscription> subscriptions) {
 
     }
 }
