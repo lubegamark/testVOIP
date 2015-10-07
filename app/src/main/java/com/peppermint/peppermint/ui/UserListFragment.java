@@ -106,7 +106,30 @@ public class UserListFragment extends Fragment {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
             holder.mTextView.setText(mDataset[position]);
-            holder.callButton.setOnClickListener(new View.OnClickListener()
+            holder.callButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AccountManager am = (AccountManager) getActivity().getSystemService(Context.ACCOUNT_SERVICE);
+                    Account[] accounts = am.getAccountsByType("com.peppermint.peppermint");
+                    Account account = null;
+                    if (accounts.length > 0) {
+                        account = accounts[0];
+                        Log.i("Account Name", account.name);
+                    }
+                    Intent i;
+                    i = new Intent(
+                            getActivity(),
+                            CallActivity.class);
+                    i.putExtra("sipUsername", "mark");
+                    i.putExtra("sipDomain", "192.168.1.20");
+                    i.putExtra("sipPassword", "bongo");
+                    i.putExtras(getActivity().getIntent().getExtras());
+
+                    //Log.i("jid", jid);
+                    startActivity(i);
+                }
+            });
+            holder.chatButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
@@ -121,10 +144,11 @@ public class UserListFragment extends Fragment {
                     Intent i;
                     i = new Intent(
                             getActivity(),
-                            CallActivity.class);
-                    //i.putExtra("sipUsername", "mark");
-                    //i.putExtra("sipDomain", "192.168.1.20");
-                    //i.putExtra("sipPassword", "bongo");
+                            ChatActivity.class);
+                    i.putExtra("sipUsername", "mark");
+                    i.putExtra("sipDomain", "192.168.1.20");
+                    i.putExtra("sipPassword", "bongo");
+                    i.putExtras(getActivity().getIntent().getExtras());
 
                     //Log.i("jid", jid);
                     startActivity(i);

@@ -34,6 +34,9 @@ import com.peppermint.peppermint.receiver.IncomingCallReceiver;
 
 import java.text.ParseException;
 
+import static com.peppermint.peppermint.util.LogUtils.LOGD;
+import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
+
 /**
  * Created by mark on 7/7/15.
  */
@@ -41,7 +44,7 @@ import java.text.ParseException;
 * Handles all calling, receiving calls, and UI interaction in the WalkieTalkie app.
 */
     public class CallActivity extends AppCompatActivity implements View.OnTouchListener {
-
+    private static final String TAG = makeLogTag(CallActivity.class);
     public String sipAddress = null;
     public String sipUsername=null;
     public String sipDomain=null;
@@ -64,11 +67,12 @@ import java.text.ParseException;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.walkietalkie);
 
-
+/*
         sipAddress = null;
         sipUsername=getIntent().getExtras().getString("sipUsername");
         sipDomain=getIntent().getExtras().getString("sipDomain");
         sipPassword=getIntent().getExtras().getString("sipPassword");
+*/
 
         // Set up the intent filter.  This will be used to fire an
         // IncomingCallReceiver when someone calls the SIP address used by this
@@ -86,6 +90,8 @@ import java.text.ParseException;
 
         initializeManager();
     }
+
+
 
 
     @Override
@@ -140,7 +146,10 @@ import java.text.ParseException;
         sipPort = Integer.parseInt( prefs.getString( "portPref", "5060" ) );
 
         */
-
+        sipUsername=getIntent().getExtras().getString("sipUsername");
+        sipDomain=getIntent().getExtras().getString("sipDomain");
+        sipPassword=getIntent().getExtras().getString("sipPassword");
+        LOGD(TAG, "password-"+sipPassword);
         if (sipUsername.length() == 0 || sipDomain.length() == 0 || sipPassword.length() == 0) {
             showDialog(R.id.SET_SIP_OPTIONS);
             return;

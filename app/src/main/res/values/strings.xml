@@ -5,4 +5,5 @@
     <string name="contactAddress">SIP Address to contact</string>
     <string name="talk">Talk</string>
     <string name="callSIPphone">make a call</string>
+    <string name="send_button_description">Send Button</string>
 </resources>

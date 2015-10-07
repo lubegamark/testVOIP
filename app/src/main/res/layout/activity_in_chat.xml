@@ -1,0 +1,65 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    >
+    <include android:id="@+id/app_bar" layout="@layout/tool_bar"/>
+    <ListView
+        android:id="@+id/chat_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        android:divider="@null"
+        android:clipToPadding="false"
+        android:layout_above="@+id/message_layout"
+        android:paddingTop="?attr/actionBarSize"
+        />
+
+
+    <LinearLayout
+
+        android:id="@+id/message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:padding="3dp"
+
+        >
+        <!--
+        <EditText
+            android:id="@+id/message_box"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:inputType="text"
+            android:layout_weight="9"/>
+
+        -->
+        <EditText
+            android:id="@+id/message_box"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:inputType="text"
+            android:layout_weight="9"/>
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:src="@drawable/ic_action_send_now"
+            android:layout_weight="1"
+            android:id="@+id/send_button"
+            android:contentDescription="@string/send_button_description"
+            />
+        <!--
+        <fragment
+            android:id="@+id/emojicons"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            class="com.rockerhieu.emojicon.EmojiconsFragment"/>
+            -->
+    </LinearLayout>
+</RelativeLayout>

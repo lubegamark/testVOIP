@@ -46,6 +46,7 @@ public class UserListActivity extends BaseActivity {
         Account account =null;
         if (accounts.length > 0) {
             account = accounts[0];
+            //openStartingPoint.putExtras(getIntent().getExtras());
             Log.i("Account Name", account.name);
         }
 
@@ -58,20 +59,10 @@ public class UserListActivity extends BaseActivity {
             setContentView(R.layout.activity_main);
 
             PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-            Intent serviceIntent = new Intent(this, CallService.class);
-            startService(serviceIntent);
+            //Intent serviceIntent = new Intent(this, CallService.class);
+            //startService(serviceIntent);
 
         }
-
-
-
-
-
-
-
-
-
-
 
     }
 
