@@ -4,29 +4,34 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.peppermint.peppermint.R;
 
+import static com.peppermint.peppermint.util.LogUtils.LOGD;
+import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class UserListFragment extends Fragment {
+    private static final String TAG = makeLogTag(UserListActivity.class);
+    Context mContext = getActivity();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    Context mContext = getActivity();
 
     public UserListFragment() {
     }
@@ -53,34 +58,35 @@ public class UserListFragment extends Fragment {
         mAdapter = new AvailableListAdapter(mContext, myDataset);
         mRecyclerView.setAdapter(mAdapter);
 
+        registerForContextMenu(mRecyclerView);
 
-        //return inflater.inflate(R.layout.fragment_main, container, false);
         return rootView;
     }
 
-    public class AvailableListAdapter extends RecyclerView.Adapter<AvailableListAdapter.ViewHolder> {
-        private String[] mDataset;
-        Context mContext;
-        // Provide a reference to the views for each data item
-        // Complex data items may need more than one view per item, and
-        // you provide access to all the views for a data item in a view holder
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
-            public TextView mTextView;
-            public ImageButton callButton;
-            public ImageButton chatButton;
-            public ImageButton moreButton;
-
-            public ViewHolder(LinearLayout v) {
-                super(v);
-                mTextView = (TextView)v.findViewById(R.id.available_name);
-                callButton = (ImageButton)v.findViewById(R.id.call_button);
-                chatButton = (ImageButton)v.findViewById(R.id.chat_button);
-                moreButton = (ImageButton)v.findViewById(R.id.more_button);
-
-            }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.BLOCK_USER:
+                LOGD(TAG, "User blocked");
+                return true;
+            case R.id.MUTE_USER:
+                LOGD(TAG, "User muted");
+            case R.id.CLEAR_CHAT:
+                LOGD(TAG, "Chat cleared");
+                return true;
+            case R.id.CLEAR_FROM_LOG:
+                LOGD(TAG, "Conversations cleared");
+            default:
+                return super.onContextItemSelected(item);
         }
+    }
 
+    public class AvailableListAdapter extends RecyclerView.Adapter<AvailableListAdapter.ViewHolder>
+     {
+        Context mContext;
+        private String[] mDataset;
+         private int selectedPos = 0;
 
         // Provide a suitable constructor (depends on the kind of dataset)
         public AvailableListAdapter(Context context,String[] myDataset) {
@@ -105,6 +111,7 @@ public class UserListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
+            holder.itemView.setSelected(true);
             holder.mTextView.setText(mDataset[position]);
             holder.callButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -120,23 +127,23 @@ public class UserListFragment extends Fragment {
                     i = new Intent(
                             getActivity(),
                             CallActivity.class);
-                    i.putExtra("sipUsername", "mark");
-                    i.putExtra("sipDomain", "192.168.1.20");
-                    i.putExtra("sipPassword", "bongo");
+
+                    //Bundle extras= getActivity().getIntent().getExtras();
+                    //extras.get("sipUsername");
+                    //extras.get("sipDomain");
+                    //extras.get("sipPassword");
                     i.putExtras(getActivity().getIntent().getExtras());
 
                     //Log.i("jid", jid);
                     startActivity(i);
                 }
             });
-            holder.chatButton.setOnClickListener(new View.OnClickListener()
-            {
+            holder.chatButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     AccountManager am = (AccountManager) getActivity().getSystemService(Context.ACCOUNT_SERVICE);
                     Account[] accounts = am.getAccountsByType("com.peppermint.peppermint");
-                    Account account =null;
+                    Account account = null;
                     if (accounts.length > 0) {
                         account = accounts[0];
                         Log.i("Account Name", account.name);
@@ -150,10 +157,10 @@ public class UserListFragment extends Fragment {
                     i.putExtra("sipPassword", "bongo");
                     i.putExtras(getActivity().getIntent().getExtras());
 
-                    //Log.i("jid", jid);
                     startActivity(i);
                 }
             });
+            holder.itemView.setSelected(true);
 
         }
 
@@ -162,6 +169,31 @@ public class UserListFragment extends Fragment {
         public int getItemCount() {
             return mDataset.length;
         }
-    }
 
+        // Provide a reference to the views for each data item
+        // Complex data items may need more than one view per item, and
+        // you provide access to all the views for a data item in a view holder
+        public class ViewHolder extends RecyclerView.ViewHolder implements OnCreateContextMenuListener {
+            // each data item is just a string in this case
+            public TextView mTextView;
+            public ImageButton callButton;
+            public ImageButton chatButton;
+
+
+            public ViewHolder(LinearLayout v) {
+                super(v);
+                mTextView = (TextView)v.findViewById(R.id.available_name);
+                callButton = (ImageButton)v.findViewById(R.id.call_button);
+                chatButton = (ImageButton)v.findViewById(R.id.chat_button);
+                v.setOnCreateContextMenuListener(this);
+                v.setClickable(true);
+            }
+
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                MenuInflater inflater = getActivity().getMenuInflater();
+                inflater.inflate(R.menu.menu_user, menu);
+            }
+        }
+    }
 }

@@ -5,7 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     >
-    <include android:id="@+id/app_bar" layout="@layout/tool_bar"/>
+    <include android:id="@+id/app_bar" layout="@layout/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
     <ListView
         android:id="@+id/chat_list_view"
         android:layout_width="match_parent"
@@ -16,7 +19,7 @@
         android:clipToPadding="false"
         android:layout_above="@+id/message_layout"
         android:paddingTop="?attr/actionBarSize"
-        />
+        android:layout_below="@+id/app_bar" />
 
 
     <LinearLayout

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/BLOCK_USER"
+        android:title="Block"/>
+    <item android:id="@+id/MUTE_USER"
+        android:title="Mute" />
+    <item android:id="@+id/CLEAR_CHAT"
+        android:title="Clear Chat" />
+    <item android:id="@+id/CLEAR_FROM_LOG"
+        android:title="Clear call log" />
+</menu>

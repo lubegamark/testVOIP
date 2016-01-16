@@ -49,7 +49,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.UserListActivity"
+            android:name="com.peppermint.peppermint.ui.UserListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="com.peppermint.peppermint.ui.UserListActivity" />
@@ -59,7 +59,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.CallActivity"
+            android:name="com.peppermint.peppermint.ui.CallActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateUnchanged" >
             <intent-filter>
@@ -69,7 +69,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ChatActivity"
+            android:name="com.peppermint.peppermint.ui.ChatActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateUnchanged" >
             <intent-filter>
@@ -79,17 +79,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.CallActivity2"
+            android:name=".ui.CallActivity_old"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateUnchanged" >
             <intent-filter>
-                <action android:name="com.peppermint.peppermint.ui.CallActivity2" />
+                <action android:name="com.peppermint.peppermint.ui.CallActivity_old" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name="com.peppermint.peppermint.ui.SettingsActivity"
             android:label="set_preferences" />
         <activity
             android:name=".ui.LoginActivity"
@@ -97,12 +97,8 @@
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
 
-        <receiver
-            android:name=".receiver.IncomingCallReceiver"
-            android:label="Call Receiver" />
-
         <service
-            android:name=".service.CallService"
+            android:name="com.peppermint.peppermint.service.CallService"
             android:enabled="true"
             android:exported="false" >
         </service>

@@ -16,7 +16,6 @@
 
 package com.peppermint.peppermint.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
@@ -382,7 +381,7 @@ public class CallFragment extends Fragment implements View.OnTouchListener {
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.sipphone_menu, menu);
+        inflater.inflate(R.menu.menu_sipphone, menu);
         //menu.add(0, CALL_ADDRESS, 0, "Call someone");
         //menu.add(0, SET_AUTH_INFO, 0, "Edit your SIP Info.");
         //menu.add(0, HANG_UP, 0, "End Current Call.");

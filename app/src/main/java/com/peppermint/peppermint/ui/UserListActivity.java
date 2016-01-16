@@ -3,27 +3,20 @@ package com.peppermint.peppermint.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.peppermint.peppermint.R;
-import com.peppermint.peppermint.service.CallService;
 
 import java.util.List;
 
@@ -64,6 +57,8 @@ public class UserListActivity extends BaseActivity {
 
         }
 
+
+
     }
 
     @Override
@@ -96,6 +91,10 @@ public class UserListActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
 
     private class WifiScanReceiver extends BroadcastReceiver {
         public void onReceive(Context c, Intent intent) {

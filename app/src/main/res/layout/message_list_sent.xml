@@ -17,7 +17,7 @@
             card_view:cardCornerRadius="4dp"
             card_view:cardUseCompatPadding="true"
             card_view:cardElevation="5dp"
-            card_view:contentPadding="2dp"
+            card_view:contentPadding="10dp"
             android:layout_gravity="right"
             >
     <LinearLayout
@@ -26,7 +26,8 @@
         android:orientation="vertical"
         android:layout_gravity="right"
         >
-    <TextView
+
+        <TextView
         android:id="@+id/message_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

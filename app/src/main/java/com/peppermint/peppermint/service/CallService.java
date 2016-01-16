@@ -18,7 +18,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.peppermint.peppermint.R;
-import com.peppermint.peppermint.receiver.IncomingCallReceiver;
 import com.peppermint.peppermint.util.NetUtils;
 
 import java.text.ParseException;
@@ -43,7 +42,7 @@ public class CallService extends Service {
     public SipManager manager = null;
     public SipProfile profile = null;
     public SipAudioCall call = null;
-    public IncomingCallReceiver callReceiver = null;
+    //public IncomingCallReceiver callReceiver = null;
 
     public static final String TAG = makeLogTag(CallService.class);
 
@@ -59,8 +58,8 @@ public class CallService extends Service {
         LOGD(TAG, "Service created");
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.peppermint.peppermint.INCOMING_CALL");
-        callReceiver = new IncomingCallReceiver();
-        this.registerReceiver(callReceiver, filter);
+        //callReceiver = new IncomingCallReceiver();
+        //this.registerReceiver(callReceiver, filter);
 
         connectedReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {

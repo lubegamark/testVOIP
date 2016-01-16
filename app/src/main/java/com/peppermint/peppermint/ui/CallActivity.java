@@ -1,457 +1,293 @@
 package com.peppermint.peppermint.ui;
 
-import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.net.sip.SipAudioCall;
-import android.net.sip.SipException;
-import android.net.sip.SipManager;
-import android.net.sip.SipProfile;
-import android.net.sip.SipRegistrationListener;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
+import android.os.Handler;
+import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.peppermint.peppermint.R;
-import com.peppermint.peppermint.call.SipSettings;
-import com.peppermint.peppermint.receiver.IncomingCallReceiver;
 
-import java.text.ParseException;
+import org.pjsip.pjsua2.AccountConfig;
+import org.pjsip.pjsua2.CallInfo;
+import org.pjsip.pjsua2.CallOpParam;
+import org.pjsip.pjsua2.VideoWindowHandle;
+import org.pjsip.pjsua2.pjsip_inv_state;
+import org.pjsip.pjsua2.pjsip_role_e;
+import org.pjsip.pjsua2.pjsip_status_code;
 
-import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
-/**
- * Created by mark on 7/7/15.
- */
-/**
-* Handles all calling, receiving calls, and UI interaction in the WalkieTalkie app.
-*/
-    public class CallActivity extends AppCompatActivity implements View.OnTouchListener {
+    public class CallActivity extends AppCompatActivity implements Handler.Callback, SurfaceHolder.Callback{
     private static final String TAG = makeLogTag(CallActivity.class);
-    public String sipAddress = null;
-    public String sipUsername=null;
-    public String sipDomain=null;
-    public String sipPassword=null;
-    public int    sipPort = 5060;
+    public static AccountConfig accCfg = null;
+    public static Handler handler_;
 
-    public SipManager manager = null;
-    public SipProfile profile = null;
-    public SipAudioCall call = null;
-    public IncomingCallReceiver callReceiver = null;
-    //private static final int CALL_ADDRESS = 1;
-    //private static final int SET_AUTH_INFO = 2;
-    //private static final int UPDATE_SETTINGS_DIALOG = 3;
-    //private static final int HANG_UP = 4;
-
-
+    private final Handler handler = new Handler(this);
+    private static CallInfo lastCallInfo;
+        private DragEventListener mDragListen;
+        private float mPrevX;
+        private float mPrevY;
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.walkietalkie);
+        //setContentView(R.layout.activity_call);
+        setContentView(R.layout.answer_fragment);
 
-/*
-        sipAddress = null;
-        sipUsername=getIntent().getExtras().getString("sipUsername");
-        sipDomain=getIntent().getExtras().getString("sipDomain");
-        sipPassword=getIntent().getExtras().getString("sipPassword");
-*/
+//        SurfaceView surfaceView = (SurfaceView)
+//                findViewById(R.id.surfaceIncomingVideo);
+//        if (MainActivity.currentCall == null ||
+//                MainActivity.currentCall.vidWin == null)
+//        {
+//            surfaceView.setVisibility(View.GONE);
+//        }
+//        surfaceView.getHolder().addCallback(this);
+//        mDragListen = new DragEventListener();
+//        final FloatingActionButton call_respond = (FloatingActionButton)findViewById(R.id.in_call_pick_up);
+//        //call_respond.setOnDragListener(mDragListen);
+//
+//        call_respond.setOnTouchListener(new View.OnTouchListener() {
+////            public void onSwipeTop(float translate) {
+////                call_respond.setTranslationY(translate);
+////                Toast.makeText(CallActivity.this, "top", Toast.LENGTH_SHORT).show();
+////            }
+////            public void onSwipeRight(float translate) {
+////                call_respond.setTranslationX(translate);
+////
+////                Toast.makeText(CallActivity.this, "right", Toast.LENGTH_SHORT).show();
+////                //LayoutParams params = new LayoutParams(call_respond.getWidth(), call_respond.getHeight(),(int)(me.getRawX() - (call_respond.getWidth() / 2)), (int)(me.getRawY() - (call_respond.getHeight())));
+////                //call_respond.setLayoutParams(params);
+////            }
+////            public void onSwipeLeft(float translate) {
+////                call_respond.setTranslationX(translate);
+////                Toast.makeText(CallActivity.this, "left", Toast.LENGTH_SHORT).show();
+////            }
+////            public void onSwipeBottom(float translate) {
+////                call_respond.setTranslationY(translate);
+////                Toast.makeText(CallActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+////            }
+//            @Override
+//            public boolean onTouch(View view, MotionEvent event) {
+//                float currX,currY;
+//                int action = event.getAction();
+//                switch (action ) {
+//                    case MotionEvent.ACTION_DOWN: {
+//
+//                        mPrevX = event.getX();
+//                        mPrevY = event.getY();
+//                        break;
+//                    }
+//
+//                    case MotionEvent.ACTION_MOVE:
+//                    {
+//
+//                        currX = event.getRawX();
+//                        currY = event.getRawY();
+//
+//
+//                        MarginLayoutParams marginParams = new MarginLayoutParams(view.getLayoutParams());
+//                        marginParams.setMargins((int)(currX - mPrevX), (int)(currY - mPrevY),0, 0);
+//                        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(marginParams);
+//                        view.setLayoutParams(layoutParams);
+//
+//
+//                        break;
+//                    }
+//
+//
+//
+////                    case MotionEvent.ACTION_CANCEL:
+////                        MarginLayoutParams marginParams = new MarginLayoutParams(view.getLayoutParams());
+////                        marginParams.setMargins(0,0,0, 0);
+////                        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(marginParams);
+////                        view.setLayoutParams(layoutParams);
+////                        break;
+//
+////                    case MotionEvent.ACTION_UP:
+////
+////                        blreak;
+//                }
+//
+//                return true;
+//            }
+//
+//
+//
+//        });
 
-        // Set up the intent filter.  This will be used to fire an
-        // IncomingCallReceiver when someone calls the SIP address used by this
-        // application.
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.peppermint.peppermint.INCOMING_CALL");
-        callReceiver = new IncomingCallReceiver();
-        this.registerReceiver(callReceiver, filter);
-
-        // "Push to talk" can be a serious pain when the screen keeps turning off.
-        // Let's prevent that.
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        findViewById(R.id.callStateImage).setOnTouchListener(this);
-
-        initializeManager();
-    }
-
-
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // When we get back from the preference setting Activity, assume
-        // settings have changed, and re-login with new auth info.
-        initializeManager();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (call != null) {
-            call.close();
-        }
-
-        closeLocalProfile();
-
-        if (callReceiver != null) {
-            this.unregisterReceiver(callReceiver);
-        }
-    }
-
-    public void initializeManager() {
-        if(manager == null) {
-            manager = SipManager.newInstance(this);
-        }
-
-        initializeLocalProfile();
-    }
-
-    /**
-     * Logs you into your SIP provider, registering this device as the location to
-     * send SIP calls to for your SIP address.
-     */
-    public void initializeLocalProfile() {
-        if (manager == null) {
-            return;
-        }
-
-        if (profile != null) {
-            closeLocalProfile();
-        }
-
-        /*
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        sipUsername = prefs.getString("namePref", "");
-        sipDomain = prefs.getString("domainPref", "");
-        sipPassword = prefs.getString("passPref", "");
-        sipPort = Integer.parseInt( prefs.getString( "portPref", "5060" ) );
-
-        */
-        sipUsername=getIntent().getExtras().getString("sipUsername");
-        sipDomain=getIntent().getExtras().getString("sipDomain");
-        sipPassword=getIntent().getExtras().getString("sipPassword");
-        LOGD(TAG, "password-"+sipPassword);
-        if (sipUsername.length() == 0 || sipDomain.length() == 0 || sipPassword.length() == 0) {
-            showDialog(R.id.SET_SIP_OPTIONS);
-            return;
-        }
-
-        try {
-            SipProfile.Builder builder = new SipProfile.Builder(sipUsername, sipDomain);
-            builder.setPassword(sipPassword);
-            builder.setPort(sipPort);
-            profile = builder.build();
-
-            Intent i = new Intent();
-            i.setAction("com.peppermint.peppermint.INCOMING_CALL");
-            PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, Intent.FILL_IN_DATA);
-            manager.open(profile, pi, null);
-
-
-            // This listener must be added AFTER manager.open is called,
-            // Otherwise the methods aren't guaranteed to fire.
-
-            manager.setRegistrationListener(profile.getUriString(), new SipRegistrationListener() {
-                public void onRegistering(String localProfileUri) {
-                    updateStatus("Registering with SIP Server...");
-                }
-
-                public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    updateStatus("Ready");
-                }
-
-                public void onRegistrationFailed(String localProfileUri, int errorCode,
-                                                 String errorMessage) {
-                    updateStatus("Registration failed.  Please check settings.");
-                }
-            });
-        } catch (ParseException pe) {
-            updateStatus("Connection Error.");
-        } catch (SipException se) {
-            updateStatus("Connection error.");
-        }
-    }
-
-    /**
-     * Closes out your local profile, freeing associated objects into memory
-     * and unregistering your device from the server.
-     */
-    public void closeLocalProfile() {
-        if (manager == null) {
-            return;
-        }
-        try {
-            if (profile != null) {
-                manager.close(profile.getUriString());
-            }
-        } catch (Exception ee) {
-            Log.d("WalkieTalkieActivity/onDestroy", "Failed to close local profile.", ee);
-        }
-    }
-
-    /**
-     * Make an outgoing call.
-     */
-    public void initiateCall() {
-
-        updateStatus(sipAddress);
-
-        try {
-            SipAudioCall.Listener listener = new SipAudioCall.Listener() {
-                // Much of the client's interaction with the SIP Stack will
-                // happen via listeners.  Even making an outgoing call, don't
-                // forget to set up a listener to set things up once the call is established.
-                @Override
-                public void onCallEstablished(SipAudioCall call) {
-                    call.startAudio();
-                    call.setSpeakerMode(true);
-                    if(call.isMuted()){
-                        call.toggleMute();
-                    }
-                    updateStatus("Call established.");
-                }
-
-                @Override
-                public void onCallEnded(SipAudioCall call) {
-                    updateStatus("Ready.");
-                }
-            };
-
-            //sipID correction (example: sipid@domain.com)
-            if(!sipAddress.contains("@")){
-                sipAddress = sipAddress + "@" + sipDomain;
-            }
-
-            call = manager.makeAudioCall(profile.getUriString(), sipAddress, listener, 30);
-
-        }
-        catch (Exception e) {
-            Log.i("WalkieTalkieActivity/InitiateCall", "Error when trying to close manager.", e);
-            if (profile != null) {
-                try {
-                    manager.close(profile.getUriString());
-                } catch (Exception ee) {
-                    Log.i("WalkieTalkieActivity/InitiateCall",
-                            "Error when trying to close manager.", ee);
-                    ee.printStackTrace();
-                }
-            }
-            if (call != null) {
-                call.close();
-            }
-        }
-    }
-
-    /**
-     * Updates the status box at the top of the UI with a messege of your choice.
-     * @param status The String to display in the status box.
-     */
-    public void updateStatus(final String status) {
-        // Be a good citizen.  Make sure UI changes fire on the UI thread.
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                TextView labelView = (TextView) findViewById(R.id.sipLabel);
-                labelView.setText(status);
-
-                //the ImageView for illustrating the call-state
-
-                ImageView callStateImage = (ImageView) findViewById(R.id.callStateImage);
-                if((call != null) && call.isInCall()){
-                    callStateImage.setBackgroundResource(R.drawable.btn_speak_pressed);
-                }
-                else {
-                    callStateImage.setBackgroundResource(R.drawable.btn_speak_normal);
-                }
-
-            }
-        });
-    }
-
-    /**
-     * Updates the status box with the SIP address of the current call.
-     * @param incomingCall The current, active call.
-     */
-    public void updateCallStatus(SipAudioCall incomingCall) {
-        if((call != null) && call.isInCall()){
+        handler_ = handler;
+        if (MainActivity.currentCall != null) {
             try {
-                incomingCall.endCall();
-            } catch (SipException se) {
-                Log.d("WalkieTalkieActivity/onOptionsItemSelected",
-                        "Error ending call.", se);
+                lastCallInfo = MainActivity.currentCall.getInfo();
+                updateCallState(lastCallInfo);
+            } catch (Exception e) {
+                System.out.println(e);
             }
-            incomingCall.close();
-            return;
+        } else {
+            updateCallState(lastCallInfo);
         }
 
-        this.call = incomingCall;
-        String useName = call.getPeerProfile().getDisplayName();
-        if(useName == null) {
-            useName = call.getPeerProfile().getUserName();
-        }
-        updateStatus(useName + "@" + call.getPeerProfile().getSipDomain());
+//        Bundle extras= getIntent().getExtras();
+//        String username = extras.getString("sipUsername").toString();
+//        String domain = extras.get("sipDomain").toString();
+//        String password = extras.get("sipPassword").toString();
+//        accCfg = new AccountConfig();
+//        accCfg.setIdUri("sip:" + username + "@" + domain);
+//        accCfg.getNatConfig().setIceEnabled(true);
+//        accCfg.getRegConfig().setRegistrarUri("sip:" + domain);
+//        AuthCredInfo creds= new AuthCredInfo("Digest", "*", username, 0, password);
+//        accCfg.getSipConfig().getAuthCreds().add(creds);
+//        MyAccount acc = new MyAccount(accCfg);
+//        LOGD(TAG, String.valueOf(acc.isValid()));
+//        try {
+//            acc.setRegistration(true);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
     }
 
-    /**
-     * Updates whether or not the user's voice is muted, depending on whether the button is pressed.
-     * @param v The View where the touch event is being fired.
-     * @param event The motion to act on.
-     * @return boolean Returns false to indicate that the parent view should handle the touch event
-     * as it normally would.
-     */
-    public boolean onTouch(View v, MotionEvent event) {
-
-        switch( v.getId() )
+@Override
+protected void onDestroy()
         {
-
-            case R.id.callStateImage:
-                if ( event.getAction() == MotionEvent.ACTION_DOWN
-                        && call != null
-                        && call.isInCall() ) {
-
-                    try {
-                        call.endCall();
-                    } catch (SipException se) {
-                        Log.d("WalkieTalkieActivity/onOptionsItemSelected",
-                                "Error ending call.", se);
-                    }
-                    call.close();
-                    updateStatus("call closed. / ready again.");
-                    return true;
-
-                } else if( event.getAction() == MotionEvent.ACTION_DOWN
-                        && ( call == null || ( call != null && !call.isInCall() ) ) ) {
-
-                    showDialog(R.id.CALL_ADDRESS);
-                    return true;
-
-                }
-                return true;
-
+        super.onDestroy();
+        handler_ = null;
         }
 
+private void updateVideoWindow(SurfaceHolder holder)
+        {
+        if (MainActivity.currentCall != null &&
+        MainActivity.currentCall.vidWin != null)
+        {
+        VideoWindowHandle vidWH = new VideoWindowHandle();
+        if (holder == null)
+        vidWH.getHandle().setWindow(null);
+        else
+        vidWH.getHandle().setWindow(holder.getSurface());
+        try {
+        MainActivity.currentCall.vidWin.setWindow(vidWH);
+        } catch (Exception e) {}
+        }
+        }
+
+public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
+        {
+        updateVideoWindow(holder);
+        }
+
+public void surfaceCreated(SurfaceHolder holder)
+        {
+        }
+
+public void surfaceDestroyed(SurfaceHolder holder)
+        {
+        updateVideoWindow(null);
+        }
+
+public void acceptCall(View view)
+        {
+        CallOpParam prm = new CallOpParam();
+        prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
+        try {
+        MainActivity.currentCall.answer(prm);
+        } catch (Exception e) {
+        System.out.println(e);
+        }
+
+        view.setVisibility(View.GONE);
+        }
+
+public void hangupCall(View view)
+        {
+        handler_ = null;
+        finish();
+
+        if (MainActivity.currentCall != null) {
+        CallOpParam prm = new CallOpParam();
+        prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+        try {
+        MainActivity.currentCall.hangup(prm);
+        } catch (Exception e) {
+        System.out.println(e);
+        }
+        }
+        }
+
+//private void setupVideoSurface()
+//        {
+//        SurfaceView surfaceView = (SurfaceView)
+//        findViewById(R.id.surfaceIncomingVideo);
+//        surfaceView.setVisibility(View.VISIBLE);
+//        updateVideoWindow(surfaceView.getHolder());
+//        }
+
+@Override
+public boolean handleMessage(Message m)
+        {
+        if (m.what == MainActivity.MSG_TYPE.CALL_STATE) {
+
+        lastCallInfo = (CallInfo) m.obj;
+        updateCallState(lastCallInfo);
+
+        } else if (m.what == MainActivity.MSG_TYPE.CALL_MEDIA_STATE) {
+
+        if (MainActivity.currentCall.vidWin != null) {
+		/* If there's incoming video, display it. */
+        //setupVideoSurface();
+        }
+
+        } else {
+
+	    /* Message not handled */
         return false;
 
-    }
+        }
 
-    @Override
-    public void onPrepareDialog(int id, android.app.Dialog dialog) {
+        return true;
+        }
 
-        switch( id )
+private void updateCallState(CallInfo ci) {
+        //TextView tvPeer  = (TextView) findViewById(R.id.textViewPeer);
+        //TextView tvState = (TextView) findViewById(R.id.textViewCallState);
+        FloatingActionButton buttonHangup = (FloatingActionButton) findViewById(R.id.in_call_hang_up);
+        //Button buttonAccept = (Button) findViewById(R.id.buttonAccept);
+        String call_state = "";
+
+        if (ci.getRole() == pjsip_role_e.PJSIP_ROLE_UAC) {
+        //buttonAccept.setVisibility(View.GONE);
+        }
+
+        if (ci.getState().swigValue() <
+        pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED.swigValue())
         {
-
-            case R.id.CALL_ADDRESS:
-                //force keyboard
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                break;
-
+        if (ci.getRole() == pjsip_role_e.PJSIP_ROLE_UAS) {
+        call_state = "Incoming call..";
+		/* Default button texts are already 'Accept' & 'Reject' */
+        } else {
+        //buttonHangup.setText("Cancel");
+        call_state = ci.getStateText();
+        }
+        }
+        else if (ci.getState().swigValue() >=
+        pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED.swigValue())
+        {
+        //buttonAccept.setVisibility(View.GONE);
+        call_state = ci.getStateText();
+        if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+        //buttonHangup.setText("Hangup");
+        } else if (ci.getState() ==
+        pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED)
+        {
+        //buttonHangup.setText("OK");
+        call_state = "Call disconnected: " + ci.getLastReason();
+        }
         }
 
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.sipphone_menu, menu);
-        //menu.add(0, CALL_ADDRESS, 0, "Call someone");
-        //menu.add(0, SET_AUTH_INFO, 0, "Edit your SIP Info.");
-        //menu.add(0, HANG_UP, 0, "End Current Call.");
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.CALL_ADDRESS:
-
-                showDialog(R.id.CALL_ADDRESS);
-                break;
-            case R.id.SET_SIP_OPTIONS:
-                updatePreferences();
-                break;
-            case R.id.HANG_UP:
-                if(call != null) {
-                    try {
-                        call.endCall();
-                    } catch (SipException se) {
-                        Log.d("WalkieTalkieActivity/onOptionsItemSelected",
-                                "Error ending call.", se);
-                    }
-                    call.close();
-                    updateStatus("call closed. / ready again.");
-                }
-                break;
+        //tvPeer.setText(ci.getRemoteUri());
+        //tvState.setText(call_state);
         }
-        return true;
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case R.id.CALL_ADDRESS:
-
-                LayoutInflater factory = LayoutInflater.from(this);
-                final View textBoxView = factory.inflate(R.layout.call_address_dialog, null);
-                return new android.app.AlertDialog.Builder(this)
-                        .setTitle("Call Someone.")
-                        .setView(textBoxView)
-                        .setPositiveButton(
-                                android.R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        EditText textField = (EditText)
-                                                (textBoxView.findViewById(R.id.calladdress_edit));
-                                        sipAddress = textField.getText().toString();
-                                        initiateCall();
-
-                                    }
-                                })
-                        .setNegativeButton(
-                                android.R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        // Noop.
-                                    }
-                                })
-                        .create();
-
-            case R.id.SET_SIP_OPTIONS:
-                return new android.app.AlertDialog.Builder(this)
-                        .setMessage("Please update your SIP Account Settings.")
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                updatePreferences();
-                            }
-                        })
-                        .setNegativeButton(
-                                android.R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        // Noop.
-                                    }
-                                })
-                        .create();
-        }
-        return null;
-    }
-
-    public void updatePreferences() {
-        Intent settingsActivity = new Intent(getBaseContext(),
-                SipSettings.class);
-        startActivity(settingsActivity);
-    }
 
 }
