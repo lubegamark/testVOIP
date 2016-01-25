@@ -74,6 +74,7 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
     private final List<String> mSmsResponses = new ArrayList<>();
 
     private GlowPadWrapper mGlowpad;
+    CallActivity callActivity;
 
     public AnswerFragment() {
     }
@@ -91,6 +92,7 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
         mGlowpad.setAnswerListener(this);
         mGlowpad.startPing();
 //        mGlowpad.stopPing();
+        callActivity = (CallActivity)getContext();
 
         return mGlowpad;
     }
@@ -249,6 +251,8 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
                         dismissCustomMessagePopup();
 //                        getPresenter().rejectCallWithMessage(textMessage);
                         Log.d(this, "Call rejected with message");
+                        LOGD(TAG, "Call rejected with mesage"+textMessage);
+                        callActivity.hangupCall();
 
                     }
                 })
@@ -320,7 +324,6 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
     public void onAnswer(int videoState, Context context) {
         Log.d(this, "onAnswer videoState=" + videoState + " context=" + context);
         LOGD(TAG, "Answered" +context);
-        CallActivity callActivity = (CallActivity)context;
                 callActivity.acceptCall(mGlowpad);
 
     }
@@ -328,7 +331,10 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
     @Override
     public void onDecline(Context context)
     {
-        Log.d(this, "onDecline  context=" + context);
+//        Log.d(this, "onDecline  context=" + context);
+        LOGD(TAG, "Declined" +context);
+        callActivity.hangupCall();
+
     }
 
     @Override
@@ -340,6 +346,8 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
     public void onText() {
         showCustomMessageDialog();
         Log.d(this, "onTest ");
+
+
 
     }
 

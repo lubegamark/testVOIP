@@ -238,6 +238,21 @@ public void hangupCall(View view)
         }
         }
         }
+        public void hangupCall()
+        {
+            handler_ = null;
+            finish();
+
+            if (MainActivity.currentCall != null) {
+                CallOpParam prm = new CallOpParam();
+                prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+                try {
+                    MainActivity.currentCall.hangup(prm);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        }
 
 //private void setupVideoSurface()
 //        {
