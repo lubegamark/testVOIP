@@ -14,18 +14,11 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
-import com.peppermint.peppermint.R;
 import com.peppermint.peppermint.call.MyAccount;
 import com.peppermint.peppermint.call.MyApp;
 import com.peppermint.peppermint.call.MyAppObserver;
@@ -41,7 +34,6 @@ import com.peppermint.peppermint.net.handler.SubscriptionHandler;
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AuthCredInfo;
 import org.pjsip.pjsua2.AuthCredInfoVector;
-import org.pjsip.pjsua2.BuddyConfig;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.StringVector;
@@ -289,16 +281,6 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
 
     }
 
-
-
-
-
-
-
-
-
-
-
     private void showCallActivity()
     {
         Intent intent = new Intent(this, CallActivity.class);
@@ -431,8 +413,56 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
             return;
         }
 
+        call.OUTGOING = true;
         currentCall = call;
+
         showCallActivity();
+    }
+
+    public static void acceptCall(View view)
+    {
+        CallOpParam prm = new CallOpParam();
+        prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
+        try {
+
+            currentCall.answer(prm);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        view.setVisibility(View.GONE);
+    }
+
+//    public static void hangupCall(View view)
+//    {
+////        handler_ = null;
+//        finish();
+//
+//        if (currentCall != null) {
+//            CallOpParam prm = new CallOpParam();
+//            prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+//            try {
+//                currentCall.hangup(prm);
+//            } catch (Exception e) {
+//                System.out.println(e);
+//            }
+//        }
+//    }
+    public static void hangupCall()
+    {
+//        handler_ = null;
+//        finish();
+
+        if (currentCall != null) {
+            CallOpParam prm = new CallOpParam();
+            prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+            try {
+                currentCall.hangup(prm);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
     }
 
     public void delBuddy(View view) {

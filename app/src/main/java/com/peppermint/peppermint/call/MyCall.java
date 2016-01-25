@@ -17,6 +17,7 @@ import org.pjsip.pjsua2.pjsua_call_media_status;
 public class MyCall extends Call
 {
     public VideoWindow vidWin;
+	public Boolean OUTGOING = false;
 
     public MyCall(MyAccount acc, int call_id)
     {

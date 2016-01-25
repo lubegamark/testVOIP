@@ -9,17 +9,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.peppermint.peppermint.R;
 
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.CallInfo;
-import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.VideoWindowHandle;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_role_e;
-import org.pjsip.pjsua2.pjsip_status_code;
 
 import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
@@ -32,7 +29,7 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
     private final Handler handler = new Handler(this);
     private static CallInfo lastCallInfo;
 
-        private FloatingActionButton buttonHangup;
+        private static FloatingActionButton buttonHangup;
         private DragEventListener mDragListen;
         private float mPrevX;
         private float mPrevY;
@@ -41,23 +38,24 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
-        FrameLayout lower = (FrameLayout)findViewById(R.id.answer_call);
+
         buttonHangup = (FloatingActionButton) findViewById(R.id.in_call_hang_up);
-        buttonHangup.setVisibility(View.GONE);
         buttonHangup.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                hangupCall(v);
+                MainActivity.hangupCall();
+                finish();
             }
         });
-//        setContentView(R.layout.answer_fragment);
-        AnswerFragment answerFragment = new AnswerFragment();
+        if (MainActivity.currentCall != null && !MainActivity.currentCall.OUTGOING) {
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.answer_call, answerFragment);
-        transaction.commit();
-
+                AnswerFragment answerFragment = new AnswerFragment();
+                hideEndCallButton();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.add(R.id.answer_call, answerFragment);
+                transaction.commit();
+        }
 //        SurfaceView surfaceView = (SurfaceView)
 //                findViewById(R.id.surfaceIncomingVideo);
 //        if (MainActivity.currentCall == null ||
@@ -149,7 +147,8 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
                 System.out.println(e);
             }
         } else {
-            updateCallState(lastCallInfo);
+//            updateCallState(lastCallInfo);
+        LOGD(TAG, "No current call");
         }
 
 //        Bundle extras= getIntent().getExtras();
@@ -171,6 +170,14 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 //        }
 
     }
+
+        public void hideEndCallButton(){
+            buttonHangup.setVisibility(View.GONE);
+        }
+
+        public void showEndCallButton(){
+            buttonHangup.setVisibility(View.VISIBLE);
+        }
 
 @Override
 protected void onDestroy()
@@ -209,50 +216,7 @@ public void surfaceDestroyed(SurfaceHolder holder)
         updateVideoWindow(null);
         }
 
-public void acceptCall(View view)
-        {
-        CallOpParam prm = new CallOpParam();
-        prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
-        try {
-        MainActivity.currentCall.answer(prm);
-        } catch (Exception e) {
-        System.out.println(e);
-        }
 
-        view.setVisibility(View.GONE);
-        buttonHangup.setVisibility(View.VISIBLE);
-        }
-
-public void hangupCall(View view)
-        {
-        handler_ = null;
-        finish();
-
-        if (MainActivity.currentCall != null) {
-        CallOpParam prm = new CallOpParam();
-        prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
-        try {
-        MainActivity.currentCall.hangup(prm);
-        } catch (Exception e) {
-        System.out.println(e);
-        }
-        }
-        }
-        public void hangupCall()
-        {
-            handler_ = null;
-            finish();
-
-            if (MainActivity.currentCall != null) {
-                CallOpParam prm = new CallOpParam();
-                prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
-                try {
-                    MainActivity.currentCall.hangup(prm);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            }
-        }
 
 //private void setupVideoSurface()
 //        {
