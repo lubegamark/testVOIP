@@ -1,12 +1,15 @@
 package com.peppermint.peppermint.ui;
 
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.peppermint.peppermint.R;
 
@@ -24,7 +27,7 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
     private static final String TAG = makeLogTag(CallActivity.class);
     public static AccountConfig accCfg = null;
     public static Handler handler_;
-
+        private AnswerFragment mAnswerFragment;
     private final Handler handler = new Handler(this);
     private static CallInfo lastCallInfo;
         private DragEventListener mDragListen;
@@ -34,8 +37,14 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_call);
-        setContentView(R.layout.answer_fragment);
+        setContentView(R.layout.activity_call);
+        FrameLayout lower = (FrameLayout)findViewById(R.id.answer_call);
+//        setContentView(R.layout.answer_fragment);
+        AnswerFragment answerFragment = new AnswerFragment();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.answer_call, answerFragment);
+        transaction.commit();
 
 //        SurfaceView surfaceView = (SurfaceView)
 //                findViewById(R.id.surfaceIncomingVideo);
@@ -290,4 +299,21 @@ private void updateCallState(CallInfo ci) {
         //tvState.setText(call_state);
         }
 
+
+
+//        /**
+//         * When fragments have a parent fragment, onAttachFragment is not called on the parent
+//         * activity. To fix this, register our own callback instead that is always called for
+//         * all fragments.
+//         *
+//         * @see {@link BaseFragment#onAttach(Activity)}
+//         */
+//        @Override
+//        public void onFragmentAttached(Fragment fragment) {
+//            if (fragment instanceof AnswerFragment) {
+//                mAnswerFragment = (AnswerFragment) fragment;
+//            } else {
+//                mAnswerFragment = (AnswerFragment) fragment;
+//            }
+//        }
 }

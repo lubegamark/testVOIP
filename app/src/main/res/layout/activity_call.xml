@@ -143,6 +143,28 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/union" />
 
+
+            <FrameLayout
+                android:id="@+id/answer_call"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <!--android:background="@color/accent">-->
+
+
+                <!--<android.support.design.widget.FloatingActionButton-->
+                    <!--android:id="@+id/in_call_pick_up"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_marginBottom="36dp"-->
+                    <!--android:src="@drawable/ic_call_white_48dp"-->
+                    <!--app:backgroundTint="@android:color/holo_blue_bright"-->
+                    <!--app:fabSize="normal"-->
+                    <!--app:layout_anchor="@id/answer_call"-->
+                    <!--app:layout_anchorGravity="bottom|right|end"-->
+                    <!--app:rippleColor="@color/white" />-->
+
+            </FrameLayout>
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/in_call_hang_up"
                 android:layout_width="wrap_content"
@@ -155,27 +177,6 @@
                 app:layout_anchor="@id/in_call_photo_group"
                 app:layout_anchorGravity="bottom|right|end"
                 app:rippleColor="@color/white" />
-            <FrameLayout
-                android:id="@+id/pick_up_call"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/accent"
-                >
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/in_call_pick_up"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="36dp"
-                    android:src="@drawable/ic_call_white_48dp"
-                    app:backgroundTint="@android:color/holo_blue_bright"
-                    app:fabSize="normal"
-                    app:layout_anchor="@id/pick_up_call"
-                    app:layout_anchorGravity="bottom|right|end"
-                    app:rippleColor="@color/white" />
-
-            </FrameLayout>
         </FrameLayout>
 
     </LinearLayout>

@@ -27,6 +27,8 @@ import com.peppermint.peppermint.ui.widget.GlowPadView;
 import com.peppermint.peppermint.util.Log;
 import com.peppermint.peppermint.util.VideoProfile;
 
+import static com.peppermint.peppermint.util.LogUtils.LOGD;
+
 /**
  *
  */
@@ -57,6 +59,7 @@ public class GlowPadWrapper extends GlowPadView implements GlowPadView.OnTrigger
     public GlowPadWrapper(Context context) {
         super(context);
         Log.d(this, "class created " + this + " ");
+        LOGD(TAG, "class created");
     }
 
     public GlowPadWrapper(Context context, AttributeSet attrs) {
@@ -116,14 +119,17 @@ public class GlowPadWrapper extends GlowPadView implements GlowPadView.OnTrigger
         final int resId = getResourceIdForTarget(target);
         switch (resId) {
             case R.drawable.ic_lockscreen_answer:
+                LOGD(TAG, "Answered");
                 mAnswerListener.onAnswer(VideoProfile.STATE_AUDIO_ONLY, getContext());
                 mTargetTriggered = true;
                 break;
             case R.drawable.ic_lockscreen_decline:
+                LOGD(TAG, "Declined");
                 mAnswerListener.onDecline(getContext());
                 mTargetTriggered = true;
                 break;
             case R.drawable.ic_lockscreen_text:
+                LOGD(TAG, "Text");
                 mAnswerListener.onText();
                 mTargetTriggered = true;
                 break;
