@@ -319,6 +319,10 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
     @Override
     public void onAnswer(int videoState, Context context) {
         Log.d(this, "onAnswer videoState=" + videoState + " context=" + context);
+        LOGD(TAG, "Answered" +context);
+        CallActivity callActivity = (CallActivity)context;
+                callActivity.acceptCall(mGlowpad);
+
     }
 
     @Override

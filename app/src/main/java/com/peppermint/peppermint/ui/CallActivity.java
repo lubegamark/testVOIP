@@ -21,6 +21,7 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_role_e;
 import org.pjsip.pjsua2.pjsip_status_code;
 
+import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
     public class CallActivity extends AppCompatActivity implements Handler.Callback, SurfaceHolder.Callback{
@@ -30,6 +31,8 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
         private AnswerFragment mAnswerFragment;
     private final Handler handler = new Handler(this);
     private static CallInfo lastCallInfo;
+
+        private FloatingActionButton buttonHangup;
         private DragEventListener mDragListen;
         private float mPrevX;
         private float mPrevY;
@@ -39,6 +42,15 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
         FrameLayout lower = (FrameLayout)findViewById(R.id.answer_call);
+        buttonHangup = (FloatingActionButton) findViewById(R.id.in_call_hang_up);
+        buttonHangup.setVisibility(View.GONE);
+        buttonHangup.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                hangupCall(v);
+            }
+        });
 //        setContentView(R.layout.answer_fragment);
         AnswerFragment answerFragment = new AnswerFragment();
 
@@ -131,6 +143,7 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
         if (MainActivity.currentCall != null) {
             try {
                 lastCallInfo = MainActivity.currentCall.getInfo();
+                LOGD(TAG, "last callinfo-"+lastCallInfo);
                 updateCallState(lastCallInfo);
             } catch (Exception e) {
                 System.out.println(e);
@@ -207,6 +220,7 @@ public void acceptCall(View view)
         }
 
         view.setVisibility(View.GONE);
+        buttonHangup.setVisibility(View.VISIBLE);
         }
 
 public void hangupCall(View view)
@@ -261,7 +275,7 @@ public boolean handleMessage(Message m)
 private void updateCallState(CallInfo ci) {
         //TextView tvPeer  = (TextView) findViewById(R.id.textViewPeer);
         //TextView tvState = (TextView) findViewById(R.id.textViewCallState);
-        FloatingActionButton buttonHangup = (FloatingActionButton) findViewById(R.id.in_call_hang_up);
+
         //Button buttonAccept = (Button) findViewById(R.id.buttonAccept);
         String call_state = "";
 
@@ -301,19 +315,5 @@ private void updateCallState(CallInfo ci) {
 
 
 
-//        /**
-//         * When fragments have a parent fragment, onAttachFragment is not called on the parent
-//         * activity. To fix this, register our own callback instead that is always called for
-//         * all fragments.
-//         *
-//         * @see {@link BaseFragment#onAttach(Activity)}
-//         */
-//        @Override
-//        public void onFragmentAttached(Fragment fragment) {
-//            if (fragment instanceof AnswerFragment) {
-//                mAnswerFragment = (AnswerFragment) fragment;
-//            } else {
-//                mAnswerFragment = (AnswerFragment) fragment;
-//            }
-//        }
+
 }
