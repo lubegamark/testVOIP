@@ -91,11 +91,6 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
         return item;
     }
 
-
-
-
-
-
     @Override
 	protected void onCreate(Bundle Splash) {
 		super.onCreate(Splash);
@@ -239,6 +234,7 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
         openStartingPoint.putExtra("sipUsername", am.getUserData(androidAccount, "username"));
         openStartingPoint.putExtra("sipDomain", subscription.getLocal_ip());
         openStartingPoint.putExtra("sipPassword", subscription.getPassword());
+        openStartingPoint.putExtra("local_api", subscription.getLocal_api());
         LOGD(TAG, "Subscription Registered");
 
 
@@ -434,25 +430,9 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
         view.setVisibility(View.GONE);
     }
 
-//    public static void hangupCall(View view)
-//    {
-////        handler_ = null;
-//        finish();
-//
-//        if (currentCall != null) {
-//            CallOpParam prm = new CallOpParam();
-//            prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
-//            try {
-//                currentCall.hangup(prm);
-//            } catch (Exception e) {
-//                System.out.println(e);
-//            }
-//        }
-//    }
+
     public static void hangupCall()
     {
-//        handler_ = null;
-//        finish();
 
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();

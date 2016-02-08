@@ -22,18 +22,34 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.peppermint.peppermint.R;
+import com.peppermint.peppermint.net.callback.BuddyCallback;
+import com.peppermint.peppermint.net.handler.BuddyHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
-public class UserListFragment extends Fragment {
+public class UserListFragment extends Fragment implements BuddyCallback{
     private static final String TAG = makeLogTag(UserListActivity.class);
     Context mContext = getActivity();
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private AvailableListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
+    private List<String> peerList;
+    private BuddyHandler buddyHandler;
     public UserListFragment() {
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        String local_api = "http://"+getActivity().getIntent().getExtras().getString("local_api");
+        buddyHandler = new BuddyHandler(getActivity(), local_api);
+        buddyHandler.setBuddyCallback(this);
+        buddyHandler.geBuddies();
     }
 
     @Override
@@ -52,10 +68,10 @@ public class UserListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        String [] myDataset = new String[]{"John", "James Muvabulaya N'ekitooke", "Mary"};
+        peerList = new ArrayList<String>();
 
         // specify an adapter (see also next example)
-        mAdapter = new AvailableListAdapter(mContext, myDataset);
+        mAdapter = new AvailableListAdapter(mContext, peerList);
         mRecyclerView.setAdapter(mAdapter);
 
         registerForContextMenu(mRecyclerView);
@@ -82,18 +98,29 @@ public class UserListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void getBudddiesResponseReceived(List<String> myBuddies) {
+//        peerList.addAll(myBuddies);
+        mAdapter.addItemsToList(myBuddies);
+        LOGD(TAG, "Bongo" + myBuddies);
+    }
+
     public class AvailableListAdapter extends RecyclerView.Adapter<AvailableListAdapter.ViewHolder>
      {
         Context mContext;
-        private String[] mDataset;
+        private List<String> mDataset;
          private int selectedPos = 0;
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public AvailableListAdapter(Context context,String[] myDataset) {
+        public AvailableListAdapter(Context context,List<String> myDataset) {
             mDataset = myDataset;
             mContext = context;
         }
-
+         public void addItemsToList(List<String> items){
+             mDataset.addAll(items);
+             notifyDataSetChanged();
+             LOGD(TAG, "data added");
+         }
         // Create new views (invoked by the layout manager)
         @Override
         public AvailableListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
@@ -112,7 +139,7 @@ public class UserListFragment extends Fragment {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
             holder.itemView.setSelected(true);
-            holder.mTextView.setText(mDataset[position]);
+            holder.mTextView.setText(mDataset.get(position));
             holder.callButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -164,10 +191,11 @@ public class UserListFragment extends Fragment {
 
         }
 
+
         // Return the size of your dataset (invoked by the layout manager)
         @Override
         public int getItemCount() {
-            return mDataset.length;
+            return mDataset.size();
         }
 
         // Provide a reference to the views for each data item

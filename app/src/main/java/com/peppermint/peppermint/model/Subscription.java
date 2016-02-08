@@ -13,8 +13,15 @@ public class Subscription {
     private String ended;
     private String password;
     private String local_ip;
+    private String local_api;
 
+    public String getLocal_api() {
+        return local_api;
+    }
 
+    public void setLocal_api(String local_api) {
+        this.local_api = local_api;
+    }
 
     public int getId() {
         return id;

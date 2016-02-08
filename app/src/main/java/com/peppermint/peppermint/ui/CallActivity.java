@@ -7,32 +7,26 @@ import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.peppermint.peppermint.R;
 
-import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.CallInfo;
-import org.pjsip.pjsua2.VideoWindowHandle;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_role_e;
 
 import static com.peppermint.peppermint.util.LogUtils.LOGD;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
-    public class CallActivity extends AppCompatActivity implements Handler.Callback, SurfaceHolder.Callback{
+    public class CallActivity extends AppCompatActivity implements Handler.Callback{
     private static final String TAG = makeLogTag(CallActivity.class);
-    public static AccountConfig accCfg = null;
     public static Handler handler_;
-        private AnswerFragment mAnswerFragment;
+    private AnswerFragment mAnswerFragment;
     private final Handler handler = new Handler(this);
     private static CallInfo lastCallInfo;
 
         private static FloatingActionButton buttonHangup;
-        private DragEventListener mDragListen;
-        private float mPrevX;
-        private float mPrevY;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -50,92 +44,12 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
         });
         if (MainActivity.currentCall != null && !MainActivity.currentCall.OUTGOING) {
 
-                AnswerFragment answerFragment = new AnswerFragment();
+                mAnswerFragment = new AnswerFragment();
                 hideEndCallButton();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.add(R.id.answer_call, answerFragment);
+                transaction.add(R.id.answer_call, mAnswerFragment);
                 transaction.commit();
         }
-//        SurfaceView surfaceView = (SurfaceView)
-//                findViewById(R.id.surfaceIncomingVideo);
-//        if (MainActivity.currentCall == null ||
-//                MainActivity.currentCall.vidWin == null)
-//        {
-//            surfaceView.setVisibility(View.GONE);
-//        }
-//        surfaceView.getHolder().addCallback(this);
-//        mDragListen = new DragEventListener();
-//        final FloatingActionButton call_respond = (FloatingActionButton)findViewById(R.id.in_call_pick_up);
-//        //call_respond.setOnDragListener(mDragListen);
-//
-//        call_respond.setOnTouchListener(new View.OnTouchListener() {
-////            public void onSwipeTop(float translate) {
-////                call_respond.setTranslationY(translate);
-////                Toast.makeText(CallActivity.this, "top", Toast.LENGTH_SHORT).show();
-////            }
-////            public void onSwipeRight(float translate) {
-////                call_respond.setTranslationX(translate);
-////
-////                Toast.makeText(CallActivity.this, "right", Toast.LENGTH_SHORT).show();
-////                //LayoutParams params = new LayoutParams(call_respond.getWidth(), call_respond.getHeight(),(int)(me.getRawX() - (call_respond.getWidth() / 2)), (int)(me.getRawY() - (call_respond.getHeight())));
-////                //call_respond.setLayoutParams(params);
-////            }
-////            public void onSwipeLeft(float translate) {
-////                call_respond.setTranslationX(translate);
-////                Toast.makeText(CallActivity.this, "left", Toast.LENGTH_SHORT).show();
-////            }
-////            public void onSwipeBottom(float translate) {
-////                call_respond.setTranslationY(translate);
-////                Toast.makeText(CallActivity.this, "bottom", Toast.LENGTH_SHORT).show();
-////            }
-//            @Override
-//            public boolean onTouch(View view, MotionEvent event) {
-//                float currX,currY;
-//                int action = event.getAction();
-//                switch (action ) {
-//                    case MotionEvent.ACTION_DOWN: {
-//
-//                        mPrevX = event.getX();
-//                        mPrevY = event.getY();
-//                        break;
-//                    }
-//
-//                    case MotionEvent.ACTION_MOVE:
-//                    {
-//
-//                        currX = event.getRawX();
-//                        currY = event.getRawY();
-//
-//
-//                        MarginLayoutParams marginParams = new MarginLayoutParams(view.getLayoutParams());
-//                        marginParams.setMargins((int)(currX - mPrevX), (int)(currY - mPrevY),0, 0);
-//                        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(marginParams);
-//                        view.setLayoutParams(layoutParams);
-//
-//
-//                        break;
-//                    }
-//
-//
-//
-////                    case MotionEvent.ACTION_CANCEL:
-////                        MarginLayoutParams marginParams = new MarginLayoutParams(view.getLayoutParams());
-////                        marginParams.setMargins(0,0,0, 0);
-////                        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(marginParams);
-////                        view.setLayoutParams(layoutParams);
-////                        break;
-//
-////                    case MotionEvent.ACTION_UP:
-////
-////                        blreak;
-//                }
-//
-//                return true;
-//            }
-//
-//
-//
-//        });
 
         handler_ = handler;
         if (MainActivity.currentCall != null) {
@@ -150,24 +64,6 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 //            updateCallState(lastCallInfo);
         LOGD(TAG, "No current call");
         }
-
-//        Bundle extras= getIntent().getExtras();
-//        String username = extras.getString("sipUsername").toString();
-//        String domain = extras.get("sipDomain").toString();
-//        String password = extras.get("sipPassword").toString();
-//        accCfg = new AccountConfig();
-//        accCfg.setIdUri("sip:" + username + "@" + domain);
-//        accCfg.getNatConfig().setIceEnabled(true);
-//        accCfg.getRegConfig().setRegistrarUri("sip:" + domain);
-//        AuthCredInfo creds= new AuthCredInfo("Digest", "*", username, 0, password);
-//        accCfg.getSipConfig().getAuthCreds().add(creds);
-//        MyAccount acc = new MyAccount(accCfg);
-//        LOGD(TAG, String.valueOf(acc.isValid()));
-//        try {
-//            acc.setRegistration(true);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
     }
 
@@ -185,46 +81,6 @@ protected void onDestroy()
         super.onDestroy();
         handler_ = null;
         }
-
-private void updateVideoWindow(SurfaceHolder holder)
-        {
-        if (MainActivity.currentCall != null &&
-        MainActivity.currentCall.vidWin != null)
-        {
-        VideoWindowHandle vidWH = new VideoWindowHandle();
-        if (holder == null)
-        vidWH.getHandle().setWindow(null);
-        else
-        vidWH.getHandle().setWindow(holder.getSurface());
-        try {
-        MainActivity.currentCall.vidWin.setWindow(vidWH);
-        } catch (Exception e) {}
-        }
-        }
-
-public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
-        {
-        updateVideoWindow(holder);
-        }
-
-public void surfaceCreated(SurfaceHolder holder)
-        {
-        }
-
-public void surfaceDestroyed(SurfaceHolder holder)
-        {
-        updateVideoWindow(null);
-        }
-
-
-
-//private void setupVideoSurface()
-//        {
-//        SurfaceView surfaceView = (SurfaceView)
-//        findViewById(R.id.surfaceIncomingVideo);
-//        surfaceView.setVisibility(View.VISIBLE);
-//        updateVideoWindow(surfaceView.getHolder());
-//        }
 
 @Override
 public boolean handleMessage(Message m)
@@ -252,14 +108,10 @@ public boolean handleMessage(Message m)
         }
 
 private void updateCallState(CallInfo ci) {
-        //TextView tvPeer  = (TextView) findViewById(R.id.textViewPeer);
-        //TextView tvState = (TextView) findViewById(R.id.textViewCallState);
-
-        //Button buttonAccept = (Button) findViewById(R.id.buttonAccept);
         String call_state = "";
 
         if (ci.getRole() == pjsip_role_e.PJSIP_ROLE_UAC) {
-        //buttonAccept.setVisibility(View.GONE);
+
         }
 
         if (ci.getState().swigValue() <
@@ -269,27 +121,22 @@ private void updateCallState(CallInfo ci) {
         call_state = "Incoming call..";
 		/* Default button texts are already 'Accept' & 'Reject' */
         } else {
-        //buttonHangup.setText("Cancel");
         call_state = ci.getStateText();
         }
         }
         else if (ci.getState().swigValue() >=
         pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED.swigValue())
         {
-        //buttonAccept.setVisibility(View.GONE);
         call_state = ci.getStateText();
         if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
         //buttonHangup.setText("Hangup");
         } else if (ci.getState() ==
         pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED)
         {
-        //buttonHangup.setText("OK");
         call_state = "Call disconnected: " + ci.getLastReason();
         }
         }
 
-        //tvPeer.setText(ci.getRemoteUri());
-        //tvState.setText(call_state);
         }
 
 
