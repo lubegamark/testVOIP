@@ -29,6 +29,6 @@ public class Config {
 
     //public static final Uri API = Uri.parse("http://192.168.1.10:8000/api/");
     //public static final String API = "http://192.168.43.58:8000/api";
-    public static final String API = "http://192.168.1.11:8000/api";
+    public static final String API = "http://192.168.1.2:8000/api";
     //public static final String API = "http://192.168.10.115:8000/api";
 }

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.peppermint.peppermint.R;
 import com.peppermint.peppermint.net.callback.BuddyCallback;
 import com.peppermint.peppermint.net.handler.BuddyHandler;
+import com.peppermint.peppermint.util.AccountUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +139,7 @@ public class UserListFragment extends Fragment implements BuddyCallback{
         public void onBindViewHolder(ViewHolder holder, int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
+            final String buddyUsername = mDataset.get(position);
             holder.itemView.setSelected(true);
             holder.mTextView.setText(mDataset.get(position));
             holder.callButton.setOnClickListener(new View.OnClickListener() {
@@ -155,12 +157,10 @@ public class UserListFragment extends Fragment implements BuddyCallback{
                             getActivity(),
                             CallActivity.class);
 
-                    //Bundle extras= getActivity().getIntent().getExtras();
-                    //extras.get("sipUsername");
-                    //extras.get("sipDomain");
-                    //extras.get("sipPassword");
                     i.putExtras(getActivity().getIntent().getExtras());
-
+                    String domain = getActivity().getIntent().getExtras().getString("sipDomain");
+//                    i.putExtra("buddy_uri", AccountUtils.makeSipUri(buddyUsername, domain));
+                    MainActivity.makeCall(AccountUtils.makeSipUri(buddyUsername, domain));
                     //Log.i("jid", jid);
                     startActivity(i);
                 }

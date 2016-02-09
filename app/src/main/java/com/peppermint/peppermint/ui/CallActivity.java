@@ -51,6 +51,7 @@ import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
                 transaction.commit();
         }
 
+
         handler_ = handler;
         if (MainActivity.currentCall != null) {
             try {

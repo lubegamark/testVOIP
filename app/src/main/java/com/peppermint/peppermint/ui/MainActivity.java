@@ -30,6 +30,7 @@ import com.peppermint.peppermint.net.callback.NetworkCallback;
 import com.peppermint.peppermint.net.callback.SubscriptionCallback;
 import com.peppermint.peppermint.net.handler.NetworkHandler;
 import com.peppermint.peppermint.net.handler.SubscriptionHandler;
+import com.peppermint.peppermint.util.AccountUtils;
 
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AuthCredInfo;
@@ -241,7 +242,7 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
         String username = am.getUserData(androidAccount, "username");
         String domain = subscription.getLocal_ip();
         String password = subscription.getPassword();
-        accCfg.setIdUri("sip:" + username + "@" + domain);
+        accCfg.setIdUri(AccountUtils.makeSipUri(username, domain));
         accCfg.getNatConfig().setIceEnabled(true);
         accCfg.getRegConfig().setRegistrarUri("sip:" + domain);
         AuthCredInfoVector creds = accCfg.getSipConfig().
@@ -276,6 +277,7 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
     public void getSubscriptionsResponseReceived(List<Subscription> subscriptions) {
 
     }
+
 
     private void showCallActivity()
     {
@@ -385,19 +387,19 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
 
 
 
-    public void makeCall(View view)
+    public static void makeCall(String uri)
     {
-        if (buddyListSelectedIdx == -1)
-            return;
+//        if (buddyListSelectedIdx == -1)
+//            return;
 
 	/* Only one call at anytime */
         if (currentCall != null) {
             return;
         }
 
-        HashMap<String, String> item = (HashMap<String, String>) buddyListView.
-                getItemAtPosition(buddyListSelectedIdx);
-        String buddy_uri = item.get("uri");
+//        HashMap<String, String> item = (HashMap<String, String>) buddyListView.
+//                getItemAtPosition(buddyListSelectedIdx);
+        String buddy_uri = uri;
 
         MyCall call = new MyCall(account, -1);
         CallOpParam prm = new CallOpParam(true);
@@ -412,7 +414,7 @@ public class MainActivity extends Activity implements NetworkCallback, Subscript
         call.OUTGOING = true;
         currentCall = call;
 
-        showCallActivity();
+//        showCallActivity();
     }
 
     public static void acceptCall(View view)

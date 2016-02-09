@@ -5,12 +5,9 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.peppermint.peppermint.model.User;
 import com.peppermint.peppermint.ui.UserListActivity;
-
-import org.json.JSONObject;
 
 /**
  * Created by mark on 7/28/15.
@@ -32,5 +29,7 @@ public static void registerAccount(User user, Context context){
     context.startActivity(openStartingPoint);
 
 }
-
+    public static String makeSipUri(String username, String domain){
+        return "sip:" + username + "@" + domain;
+    }
 }
