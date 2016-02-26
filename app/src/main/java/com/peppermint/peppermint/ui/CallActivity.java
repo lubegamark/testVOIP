@@ -17,7 +17,6 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_role_e;
 
 import static com.peppermint.peppermint.util.LogUtils.LOGD;
-import static com.peppermint.peppermint.util.LogUtils.LOGE;
 import static com.peppermint.peppermint.util.LogUtils.makeLogTag;
 
 public class CallActivity extends AppCompatActivity implements Handler.Callback {
@@ -30,6 +29,7 @@ public class CallActivity extends AppCompatActivity implements Handler.Callback 
     private static FloatingActionButton buttonHangup;
     private static TextView timerTextView;
     private static TextView actionTextView;
+    private static TextView nameTextView;
 
     long startTime = 0;
 
@@ -58,6 +58,7 @@ public class CallActivity extends AppCompatActivity implements Handler.Callback 
         setContentView(R.layout.activity_call);
         timerTextView = (TextView)findViewById(R.id.time);
         actionTextView = (TextView)findViewById(R.id.action);
+        nameTextView = (TextView)findViewById(R.id.name);
         buttonHangup = (FloatingActionButton) findViewById(R.id.in_call_hang_up);
         buttonHangup.setOnClickListener(new View.OnClickListener() {
 
@@ -67,13 +68,14 @@ public class CallActivity extends AppCompatActivity implements Handler.Callback 
                 timerHandler.removeCallbacks(timerRunnable);
                 actionTextView.setText("Call ended...");
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 finish();
             }
         });
+//        nameTextView.setText();
         if (MainActivity.currentCall != null && !MainActivity.currentCall.OUTGOING) {
 
             mAnswerFragment = new AnswerFragment();
@@ -151,11 +153,17 @@ public class CallActivity extends AppCompatActivity implements Handler.Callback 
             if (ci.getRole() == pjsip_role_e.PJSIP_ROLE_UAS) {
                 call_state = "Incoming call...";
                 actionTextView.setText("Incoming Call...");
+                nameTextView.setText(
+                        ci.getRemoteUri()
+                        .substring(ci.getRemoteUri().indexOf(":")+1, ci.getRemoteUri().indexOf("@")));
 
 		/* Default button texts are already 'Accept' & 'Reject' */
             } else {
                 call_state = ci.getStateText();
                 actionTextView.setText("Dialing...");
+                nameTextView.setText(
+                        ci.getRemoteUri()
+                                .substring(ci.getRemoteUri().indexOf(":")+1, ci.getRemoteUri().indexOf("@")));
             }
         } else if (ci.getState().swigValue() >=
                 pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED.swigValue()) {
@@ -172,7 +180,7 @@ public class CallActivity extends AppCompatActivity implements Handler.Callback 
                 actionTextView.setText("Call ended...");
                 call_state = "Call disconnected: " + ci.getLastReason();
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -180,10 +188,7 @@ public class CallActivity extends AppCompatActivity implements Handler.Callback 
             }
         }
         if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING) {
-            LOGE(TAG, "State " + ci.getState());
-            LOGE(TAG, "iNCOMING PICKED" + ci.getState());
             startTime = System.currentTimeMillis();
-
             timerHandler.postDelayed(timerRunnable, 0);
         }
 //        LOGE(TAG, "CallId String " + ci.getCallIdString());

@@ -20,7 +20,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -76,6 +81,9 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
     private GlowPadWrapper mGlowpad;
     CallActivity callActivity;
 
+    public Vibrator vibrator;
+    private AudioManager myAudioManager;
+    Ringtone r;
     public AnswerFragment() {
     }
 
@@ -84,27 +92,31 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
             Bundle savedInstanceState) {
         mGlowpad = (GlowPadWrapper) inflater.inflate(R.layout.answer_fragment,
                 container, false);
+        vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        myAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 
-//        Log.d(this, "Creating view for answer fragment ", this);
+        Uri ring = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        r = RingtoneManager.getRingtone(getContext(), ring);
+        r.play();
+        long[] pattern = {100, 1000, 2000, 1000, 2000, 1000, 2000};
+        vibrator.vibrate(pattern, 2 );
+
         LOGD(TAG, " Creating view for answer fragment");
-//        Log.d(this, "Created from activity", getActivity());
-        LOGD(TAG, "Created from activity"+getActivity());
+        LOGD(TAG, "Created from activity" + getActivity());
         mGlowpad.setAnswerListener(this);
         mGlowpad.startPing();
-//        mGlowpad.stopPing();
         callActivity = (CallActivity)getContext();
-
         return mGlowpad;
     }
 
     @Override
     public void onDestroyView() {
-//        Log.d(this, "onDestroyView");
         LOGD(TAG, "onDestroyView");
         if (mGlowpad != null) {
             mGlowpad.stopPing();
             mGlowpad = null;
         }
+        r.stop();
         super.onDestroyView();
     }
 
