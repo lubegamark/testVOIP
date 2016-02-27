@@ -120,6 +120,13 @@ public class AnswerFragment extends Fragment implements GlowPadWrapper.AnswerLis
         super.onDestroyView();
     }
 
+    @Override
+    public void onPause() {
+        r.stop();
+        vibrator.cancel();
+        super.onPause();
+    }
+
     /**
      * Sets targets on the glowpad according to target set identified by the parameter.
      * @param targetSet Integer identifying the set of targets to use.
